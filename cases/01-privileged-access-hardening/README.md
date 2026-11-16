@@ -14,7 +14,7 @@ I built this Entra ID tenant in mid-2026 as a hands-on lab while preparing for, 
 
 The audit showed that **shortcuts taken while studying had outlived their purpose**. An MFA exclusion I had added so a misconfigured policy couldn't lock me out was never removed. Test admin accounts were still enabled with only a password. And while admins were required to use MFA, nothing required it to be phishing-resistant.
 
-I logged **13 findings**, 6 of them high severity. **8 are remediated or contained** with before/after evidence, **1 is partially mitigated**, and the rest are documented with a recommendation or an explicit risk decision. I then deployed phishing-resistant MFA for every admin role, tested in Report-only first and then enforced.
+I logged **13 findings**, 6 of them high severity. **8 are remediated or contained** with before/after evidence, **2 are formally risk-accepted** with compensating controls, and **3 remain open** with a recommendation. I then deployed phishing-resistant MFA for every admin role, tested in Report-only first and then enforced.
 
 | Outcome | Before | After |
 |---|---|---|
@@ -92,7 +92,7 @@ I logged 13 findings, ordered by severity:
 | 2 | No phishing-resistant MFA requirement for admin roles | **High** | ✅ Remediated |
 | 3 | 5 admin-named accounts with password only and no MFA registered (3 with delegated roles, 2 with no role and no sign-in since creation) | **High** | ✅ Contained: accounts disabled until onboarding with a Temporary Access Pass |
 | 4 | Registering a new credential is protected only by standard MFA, or by nothing at all on a password-only account | **High** | ⬜ Open |
-| 5 | Break glass and primary admin depended on the same single FIDO2 key | **High** | 🟡 Partially mitigated |
+| 5 | Break glass and primary admin depended on the same single FIDO2 key | **High** | ⚪ Risk accepted, with compensating controls |
 | 6 | Privileged roles assigned permanently (no PIM / just-in-time) | **High** | ⬜ Open (planned) |
 | 7 | Previous admin account still enabled and licensed after 135 days without use | Medium | ✅ Remediated |
 | 8 | Break glass included in a Conditional Access policy | Medium | ✅ Remediated |
@@ -148,6 +148,20 @@ This is why the severity is High. **A strong authentication policy is only as st
 
 **Recommendation:** a Conditional Access policy on the *Register security information* user action that requires a trusted location and/or a **Temporary Access Pass** issued by an administrator.
 
+### Finding 5: One key for two critical accounts (risk accepted)
+
+The break glass account and the primary admin were both protected by the same YubiKey. Losing that one key would have locked out **both** accounts at once.
+
+**What changed:** the primary admin now also has an independent, device-bound passkey in Microsoft Authenticator. If the YubiKey is lost, the primary admin can still sign in, issue a **Temporary Access Pass** to the break glass account and register a new key for it. A lockout would now require two independent failures at the same time.
+
+**Decision: risk accepted** instead of creating a second break glass account with a second security key.
+
+| | |
+|---|---|
+| **Rationale** | Lab tenant with a single administrator; a second hardware key has a cost; the residual risk is low after the primary admin got an independent recovery path. Password-only emergency accounts are not an option, because Microsoft now enforces MFA on the Azure portal and the Entra admin center. |
+| **Compensating controls** | YubiKey protected by a PIN and stored securely · periodic break glass sign-in test · alert on any break glass sign-in (see [Recommendations](#6-recommendations)) |
+| **Review trigger** | Re-evaluate if the tenant moves to production use or gains more administrators. In production, the recommendation stands: **two break glass accounts with independent credentials**. |
+
 ### Finding 7: Disabled ≠ no access
 
 The previous admin account was disabled, its sessions revoked and its P2 license removed. After disabling it, the account **remained a member of an attribute-based dynamic group** (`usageLocation = CL`). Disabling an account does not remove its group memberships. That matters for any access granted through those groups. (Related to Finding 10.)
@@ -183,7 +197,7 @@ The new policy was deployed in **Report-only**, validated, and then switched to 
 - Removed the primary admin from the exclusion group (F1)
 - Enforced phishing-resistant MFA for every admin role (F2)
 - Disabled the 5 password-only admin-named accounts until TAP-based onboarding (F3)
-- Added a second device-bound passkey for the primary admin, registered in Microsoft Authenticator (F5, partial)
+- Added a second device-bound passkey for the primary admin, registered in Microsoft Authenticator, and formally accepted the residual single-key risk for the break glass (F5)
 - Disabled the stale admin account, revoked its sessions and removed its license (F7)
 - Excluded the break glass from all CA policies (F8)
 - Enabled a password-recovery path for the primary admin (F9)
@@ -192,10 +206,9 @@ The new policy was deployed in **Report-only**, validated, and then switched to 
 
 **Next:**
 1. **Conditional Access on credential registration** with a Temporary Access Pass (F4)
-2. **Second break glass account (BG02)** with its own credential, to remove the single-key dependency (F5)
-3. **Alert on any break glass sign-in.** Being excluded from every CA policy only works if its use is monitored (F8)
-4. **PIM** for just-in-time activation of privileged roles (F6)
-5. **Redesign `DG-PRIVILEGED`**, or retire it, and exclude admin accounts from attribute-based dynamic groups (F10)
+2. **Alert on any break glass sign-in.** Being excluded from every CA policy only works if its use is monitored. This is also a compensating control for F5 (F5, F8)
+3. **PIM** for just-in-time activation of privileged roles (F6)
+4. **Redesign `DG-PRIVILEGED`**, or retire it, and exclude admin accounts from attribute-based dynamic groups (F10)
 
 ---
 
