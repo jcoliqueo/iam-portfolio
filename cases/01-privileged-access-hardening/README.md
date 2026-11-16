@@ -1,7 +1,9 @@
 # Case 01 — Privileged Access Hardening in Microsoft Entra ID
 
 > **Environment:** IAM365 lab tenant (Microsoft Entra ID P2) · **Period:** June – November 2026
+>
 > **My role:** sole administrator and auditor of the tenant
+>
 > **Tools:** Entra admin center, Conditional Access, Authentication methods, What If, sign-in logs, Microsoft Graph PowerShell
 
 ---
