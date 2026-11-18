@@ -71,7 +71,7 @@ The question for this case was the one you should ask of any environment you inh
 
 | Policy | Target | Control | State |
 |---|---|---|---|
-| CA-Block-Legacy-Authentication | All users (excl. BG01) | Block legacy protocols | On |
+| CA-Block-Legacy-Authentication | All users (excl. SG-CA-EXCLUSIONS) | Block legacy protocols | On |
 | CA-AllUsers-Require-MFA | All users (excl. SG-CA-EXCLUSIONS) | Require MFA | On |
 | CA-Admin-Session-12h | Admin directory roles (excl. SG-CA-EXCLUSIONS) | Sign-in frequency 12 h | On |
 | **CA-Admins-Require-PhishingResistantMFA** | All admin directory roles (excl. SG-CA-EXCLUSIONS) | **Authentication strength: Phishing-resistant MFA** | **On** |
