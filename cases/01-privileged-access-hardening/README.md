@@ -199,7 +199,7 @@ My first assumption was that the new phishing-resistant policy would leave these
 
 📎 **Evidence:** [`admin-named-accounts.png`](evidence/admin-named-accounts.png) · [`admin-accounts-disabled.png`](evidence/admin-accounts-disabled.png)
 
-### <a id="f4"></a>Finding 4: Strong credentials can be bootstrapped from weak ones
+### <a id="f4"></a>Finding 4: Strong credentials can be bootstrapped from weak ones (open, fix planned)
 
 While testing the block on a delegated admin, Entra asked for standard MFA (password + Authenticator push) and then **offered to create a passkey**. Anyone holding those weaker credentials could have registered a phishing-resistant credential for that admin. On a password-only account the chain is even shorter: password → register Authenticator → register a passkey. The registration attempt failed, and I confirmed with Graph that no passkey was created.
 
@@ -269,7 +269,7 @@ The previous admin account was disabled, its sessions revoked and its P2 license
 
 📎 **Evidence:** [`stale-admin-offboarding.png`](evidence/stale-admin-offboarding.png)
 
-### <a id="f10"></a>Finding 10: A "privileged" group that doesn't track privilege
+### <a id="f10"></a>Finding 10: A "privileged" group that doesn't track privilege (open, fix planned)
 
 `DG-PRIVILEGED` is a dynamic group with the rule `user.jobTitle -contains "Privileged"`. That has two consequences:
 
