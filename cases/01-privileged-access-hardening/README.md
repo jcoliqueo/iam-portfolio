@@ -111,7 +111,9 @@ The settings were configured and tested on SG-ADM-GLOBAL, then **copied to the o
 
 ### Validation tooling
 
-What If simulations, sign-in log analysis (portal JSON export and Graph `beta/auditLogs/signIns`), and seven Graph PowerShell scripts. See [Scripts](#10-scripts).
+Changes were checked twice: **before**, with *What If* simulations that show which Conditional Access policies would apply to a user, and **after**, with the sign-in logs that show what actually happened (exported from the portal or queried through Microsoft Graph, `beta/auditLogs/signIns`).
+
+Inventories and coverage checks were automated with seven Microsoft Graph PowerShell scripts, linked where they are used and listed in [Scripts](#10-scripts).
 
 ---
 
