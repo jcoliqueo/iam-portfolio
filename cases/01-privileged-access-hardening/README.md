@@ -151,8 +151,10 @@ The sign-in logs of 6 November show the before and after on the same day:
 | 14:16 – 19:20 (excluded) | 8 | `notApplied` | `singleFactorAuthentication` |
 | 19:49 onwards (remediated) | 33 | `success` | `multiFactorAuthentication` |
 
-![Sign-ins before and after removing the exclusion](evidence/signins-before-after-summary.png)
-*Same day, same account: single-factor while excluded, multi-factor after the fix.*
+<p align="center">
+  <img src="evidence/signins-before-after-summary.png" alt="Sign-ins before and after removing the exclusion"><br>
+  <em>Same day, same account: single-factor while excluded, multi-factor after the fix.</em>
+</p>
 
 > **Honest note:** during the exclusion window the account was in practice used with a passkey. The finding is that **the control was missing**, so a password alone would have been enough. It is not that weak authentication was observed.
 
@@ -169,8 +171,10 @@ The sign-in logs of 6 November show the before and after on the same day:
 
 I corrected both and verified with a Graph script that every role assigned through `SG-ADM-*` is in the policy scope (see [Scripts](#10-scripts)).
 
-![Synced passkey rejected by the passkey profile](evidence/synced-passkey-rejected.png)
-*The passkey profile at work: a synced passkey (iCloud Keychain) is rejected; only device-bound passkeys are accepted.*
+<p align="center">
+  <img src="evidence/synced-passkey-rejected.png" alt="Synced passkey rejected by the passkey profile"><br>
+  <em>The passkey profile at work: a synced passkey (iCloud Keychain) is rejected; only device-bound passkeys are accepted.</em>
+</p>
 
 ### <a id="f3"></a>Finding 3: Admins with password only
 
@@ -188,8 +192,10 @@ While testing the block on a delegated admin, Entra asked for standard MFA (pass
 
 This is why the severity is High. **A strong authentication policy is only as strong as the process that issues the strong credentials.**
 
-![Passkey registration offered after standard MFA](evidence/register-passkey-offer.png)
-*After a password + push sign-in, Entra offers to create a passkey for a delegated admin.*
+<p align="center">
+  <img src="evidence/register-passkey-offer.png" alt="Passkey registration offered after standard MFA"><br>
+  <em>After a password + push sign-in, Entra offers to create a passkey for a delegated admin.</em>
+</p>
 
 **Recommendation:** a Conditional Access policy on the *Register security information* user action that requires a trusted location and/or a **Temporary Access Pass** issued by an administrator.
 
@@ -223,18 +229,24 @@ Before the change, every admin was a **permanent member** of a role-assignable g
 - **From a passkey session**, activation went through.
 - **From a password + push session**, the activation form was locked with *"A Conditional Access policy is enabled and may require additional verification"* until I used the security key.
 
-![PIM activation locked until phishing-resistant MFA](evidence/pim-activation-stepup.png)
-*Activation requested from a password + push session: locked by Conditional Access until the security key is used.*
+<p align="center">
+  <img src="evidence/pim-activation-stepup.png" alt="PIM activation locked until phishing-resistant MFA"><br>
+  <em>Activation requested from a password + push session: locked by Conditional Access until the security key is used.</em>
+</p>
 
 Day-to-day work needs standard MFA. **Getting an admin role always needs a passkey.**
 
 **Reading the inventory correctly:** after PIM, the role assignments of the groups still show as *permanent*. That is by design, because the group holds the role. What changed is **who is inside the group and for how long**. The before/after evidence for this finding is the group membership section of the inventory, not the role section.
 
-![PIM inventory before](evidence/pim-inventory-before.png)
-*Before: every admin membership permanent.*
+<p align="center">
+  <img src="evidence/pim-inventory-before.png" alt="PIM inventory before"><br>
+  <em>Before: every admin membership permanent.</em>
+</p>
 
-![PIM inventory after](evidence/pim-inventory-after.png)
-*After: one eligible membership; no standing access.*
+<p align="center">
+  <img src="evidence/pim-inventory-after.png" alt="PIM inventory after"><br>
+  <em>After: one eligible membership; no standing access.</em>
+</p>
 
 ### <a id="f7"></a>Finding 7: Disabled ≠ no access
 
