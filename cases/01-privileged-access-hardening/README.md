@@ -23,7 +23,7 @@ I logged **13 findings**, 6 of them high severity. **9 are remediated or contain
 | Standing admin access | ❌ Permanent membership in every admin group | ✅ None: eligible only, activated for max 4 h with a passkey and a justification |
 | Exceptions to Conditional Access | ❌ Permanent until someone remembers | ✅ Max 15 days, justified, email alert, monthly access review |
 | Break glass outside every Conditional Access policy | ❌ Included in 1 policy | ✅ 0 policies apply (What If) |
-| Stale and password-only admin accounts | ❌ 6 enabled | ✅ Disabled, no group memberships |
+| Stale and password-only admin accounts | ❌ 6 enabled | ✅ Disabled, removed from every admin group |
 | Strong authentication methods on the primary admin | 1 security key | 2 device-bound passkeys + recovery path |
 
 ---
