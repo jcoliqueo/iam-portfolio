@@ -67,7 +67,7 @@ The question for this case was the one you should ask of any environment you inh
 
 ## 3. What I built
 
-**Conditional Access (final state):**
+### Conditional Access (final state)
 
 | Policy | Target | Control | State |
 |---|---|---|---|
@@ -77,7 +77,7 @@ The question for this case was the one you should ask of any environment you inh
 | **CA-Admins-Require-PhishingResistantMFA** | All admin directory roles (excl. SG-CA-EXCLUSIONS) | **Authentication strength: Phishing-resistant MFA** | **On** |
 | **CA-PIM-Activation-Require-PhishingResistantMFA** | All users (excl. SG-CA-EXCLUSIONS), **authentication context "PIM activation"** | **Authentication strength: Phishing-resistant MFA** | **On** |
 
-**Just-in-time admin access (PIM for Groups):**
+### Just-in-time admin access (PIM for Groups)
 
 Each admin group keeps its Entra role **permanently**. What became just-in-time is **membership** of the group: admins are *eligible* members and activate their membership, and therefore the role, only when they need it.
 
@@ -92,7 +92,7 @@ Each admin group keeps its Entra role **permanently**. What became just-in-time 
 
 The settings were configured and tested on SG-ADM-GLOBAL, then **copied to the other four groups with a Graph script** ([`Copy-PimGroupSettings.ps1`](../../scripts/Copy-PimGroupSettings.ps1)) so all admin groups follow identical rules.
 
-**Governance of the exclusion group (`SG-CA-EXCLUSIONS`):**
+### Governance of the exclusion group (`SG-CA-EXCLUSIONS`)
 
 | Control | Configuration |
 |---|---|
@@ -101,14 +101,17 @@ The settings were configured and tested on SG-ADM-GLOBAL, then **copied to the o
 | Access Review | **Monthly** review of all members (active and eligible); results auto-applied; justification required |
 | Break glass | The only permanent member, a documented exception |
 
-**Passkey (FIDO2) profile:**
+### Passkey (FIDO2) profile
+
 - Device-bound passkeys only (synced passkeys rejected)
 - Attestation enforced
 - AAGUID allow-list: YubiKey 5 Series NFC and Microsoft Authenticator (iOS)
 
 📎 **Evidence:** [`passkey-profile.png`](evidence/passkey-profile.png)
 
-**Validation tooling:** What If simulations, sign-in log analysis (portal JSON export and Graph `beta/auditLogs/signIns`), and seven Graph PowerShell scripts. See [Scripts](#10-scripts).
+### Validation tooling
+
+What If simulations, sign-in log analysis (portal JSON export and Graph `beta/auditLogs/signIns`), and seven Graph PowerShell scripts. See [Scripts](#10-scripts).
 
 ---
 
