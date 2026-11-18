@@ -112,23 +112,23 @@ The settings were configured and tested on SG-ADM-GLOBAL, then **copied to the o
 
 ## 4. What I found
 
-I logged 13 findings, ordered by severity:
+I logged 13 findings, ordered by severity. Select a number to jump to its detail, or to the recommendation that closed it:
 
 | # | Finding | Severity | Status |
 |---|---|---|---|
-| 1 | Build-phase MFA exclusion for the primary Global Admin never removed | **High** | ✅ Remediated, and recurrence prevented |
-| 2 | No phishing-resistant MFA requirement for admin roles | **High** | ✅ Remediated |
-| 3 | 5 admin-named accounts with password only and no MFA registered (3 with delegated roles, 2 with no role and no sign-in since creation) | **High** | ✅ Contained: accounts disabled and removed from admin groups until onboarding with a Temporary Access Pass |
-| 4 | Registering a new credential is protected only by standard MFA, or by nothing at all on a password-only account | **High** | ⬜ Open |
-| 5 | Break glass and primary admin depended on the same single FIDO2 key | **High** | ⚪ Risk accepted, with compensating controls |
-| 6 | Privileged roles held permanently (no just-in-time access) | **High** | ✅ Remediated (PIM) |
-| 7 | Previous admin account still enabled and licensed after 135 days without use | Medium | ✅ Remediated |
-| 8 | Break glass included in a Conditional Access policy | Medium | ✅ Remediated |
-| 9 | Primary admin had no password-recovery path (SSPR) | Medium | ✅ Remediated |
-| 10 | A "privileged" dynamic group driven by job title rather than actual roles; attribute-based groups include admin accounts | Medium | ⬜ Open |
-| 11 | Primary admin held Global Admin plus a redundant User Admin role | Low | ✅ Remediated |
-| 12 | Two legacy CA policies: one redundant and misnamed (targeted an Audit group), one test policy | Low | ✅ Retired |
-| 13 | Guest account with no current business purpose and no MFA registered in the tenant | Low | ⚪ Risk accepted (billing dependency) |
+| [1](#f1) | Build-phase MFA exclusion for the primary Global Admin never removed | **High** | ✅ Remediated, and recurrence prevented |
+| [2](#f2) | No phishing-resistant MFA requirement for admin roles | **High** | ✅ Remediated |
+| [3](#f3) | 5 admin-named accounts with password only and no MFA registered (3 with delegated roles, 2 with no role and no sign-in since creation) | **High** | ✅ Contained: accounts disabled and removed from admin groups until onboarding with a Temporary Access Pass |
+| [4](#f4) | Registering a new credential is protected only by standard MFA, or by nothing at all on a password-only account | **High** | ⬜ Open |
+| [5](#f5) | Break glass and primary admin depended on the same single FIDO2 key | **High** | ⚪ Risk accepted, with compensating controls |
+| [6](#f6) | Privileged roles held permanently (no just-in-time access) | **High** | ✅ Remediated (PIM) |
+| [7](#f7) | Previous admin account still enabled and licensed after 135 days without use | Medium | ✅ Remediated |
+| [8](#f8) | Break glass included in a Conditional Access policy | Medium | ✅ Remediated |
+| [9](#f9) | Primary admin had no password-recovery path (SSPR) | Medium | ✅ Remediated |
+| [10](#f10) | A "privileged" dynamic group driven by job title rather than actual roles; attribute-based groups include admin accounts | Medium | ⬜ Open |
+| [11](#f11) | Primary admin held Global Admin plus a redundant User Admin role | Low | ✅ Remediated |
+| [12](#f12) | Two legacy CA policies: one redundant and misnamed (targeted an Audit group), one test policy | Low | ✅ Retired |
+| [13](#f13) | Guest account with no current business purpose and no MFA registered in the tenant | Low | ⚪ Risk accepted (billing dependency) |
 
 **Controls verified (no finding):**
 - The role-assignable admin groups and the exclusion group have **no owners**. Group owners can add members, so an owner would be a way into an admin role that bypasses PIM.
@@ -136,7 +136,7 @@ I logged 13 findings, ordered by severity:
 
 **Selected findings in detail.** The rest are summarized in the table and in [Recommendations](#6-recommendations).
 
-### Finding 1: A temporary exception that became permanent
+### <a id="f1"></a>Finding 1: A temporary exception that became permanent
 
 While building the Conditional Access baseline during my SC-300 preparation, I deliberately added the primary admin account to `SG-CA-EXCLUSIONS`. That way a misconfigured policy could not lock me out during testing. This is common practice during a rollout, **but the exception had no end date and no owner review, so it was never removed**.
 
@@ -157,7 +157,7 @@ The sign-in logs of 6 November show the before and after on the same day:
 - **"If reviewers don't respond" is set to *No change*.** A missed review must never remove the break glass from the exclusion group.
 - **The "no sign-in in 30 days" decision helper is off.** An emergency account is *supposed* to be unused, so the helper would recommend removing it every month.
 
-### Finding 2: "Require MFA" was not enough for admins
+### <a id="f2"></a>Finding 2: "Require MFA" was not enough for admins
 
 "Require multifactor authentication" is satisfied by any MFA method, including push notifications, which can be relayed or approved through fatigue attacks. I created `CA-Admins-Require-PhishingResistantMFA` from Microsoft's template. While validating it I found that the template:
 
@@ -166,7 +166,7 @@ The sign-in logs of 6 November show the before and after on the same day:
 
 I corrected both and verified with a Graph script that every role assigned through `SG-ADM-*` is in the policy scope (see [Scripts](#10-scripts)).
 
-### Finding 3: Admins with password only
+### <a id="f3"></a>Finding 3: Admins with password only
 
 Three delegated admin accounts (Helpdesk, Security) had only a password and no MFA registered, even though a Require-MFA policy was On. **Whoever knows the password can register their own MFA at the first sign-in.**
 
@@ -176,7 +176,7 @@ My first assumption was that the new phishing-resistant policy would leave these
 
 **Containment:** all five accounts are **disabled**, and their memberships in the admin groups were **removed through PIM** with a justification. A disabled account cannot sign in or register anything. If they are needed again, they will be re-enabled through a **Temporary Access Pass** issued by an administrator and given an *eligible* (not active) membership, so the password is never the entry point.
 
-### Finding 4: Strong credentials can be bootstrapped from weak ones
+### <a id="f4"></a>Finding 4: Strong credentials can be bootstrapped from weak ones
 
 While testing the block on a delegated admin, Entra asked for standard MFA (password + Authenticator push) and then **offered to create a passkey**. Anyone holding those weaker credentials could have registered a phishing-resistant credential for that admin. On a password-only account the chain is even shorter: password → register Authenticator → register a passkey. The registration attempt failed, and I confirmed with Graph that no passkey was created.
 
@@ -184,7 +184,7 @@ This is why the severity is High. **A strong authentication policy is only as st
 
 **Recommendation:** a Conditional Access policy on the *Register security information* user action that requires a trusted location and/or a **Temporary Access Pass** issued by an administrator.
 
-### Finding 5: One key for two critical accounts (risk accepted)
+### <a id="f5"></a>Finding 5: One key for two critical accounts (risk accepted)
 
 The break glass account and the primary admin were both protected by the same YubiKey. Losing that one key would have locked out **both** accounts at once.
 
@@ -198,7 +198,7 @@ The break glass account and the primary admin were both protected by the same Yu
 | **Compensating controls** | YubiKey protected by a PIN and stored securely · periodic break glass sign-in test · alert on any break glass sign-in (see [Recommendations](#6-recommendations)) |
 | **Review trigger** | Re-evaluate if the tenant moves to production use or gains more administrators. In production, the recommendation stands: **two break glass accounts with independent credentials**. |
 
-### Finding 6: Standing privilege → just-in-time access
+### <a id="f6"></a>Finding 6: Standing privilege → just-in-time access
 
 Before the change, every admin was a **permanent member** of a role-assignable group, so every admin role was always on. I moved all five admin groups to **PIM for Groups**:
 
@@ -218,11 +218,11 @@ Day-to-day work needs standard MFA. **Getting an admin role always needs a passk
 
 **Reading the inventory correctly:** after PIM, the role assignments of the groups still show as *permanent*. That is by design, because the group holds the role. What changed is **who is inside the group and for how long**. The before/after evidence for this finding is the group membership section of the inventory, not the role section.
 
-### Finding 7: Disabled ≠ no access
+### <a id="f7"></a>Finding 7: Disabled ≠ no access
 
 The previous admin account was disabled, its sessions revoked and its P2 license removed. After disabling it, the account **remained a member of an attribute-based dynamic group** (`usageLocation = CL`). Disabling an account does not remove its group memberships. That matters for any access granted through those groups. (Related to Finding 10.)
 
-### Finding 10: A "privileged" group that doesn't track privilege
+### <a id="f10"></a>Finding 10: A "privileged" group that doesn't track privilege
 
 `DG-PRIVILEGED` is a dynamic group with the rule `user.jobTitle -contains "Privileged"`. That has two consequences:
 
@@ -231,7 +231,7 @@ The previous admin account was disabled, its sessions revoked and its P2 license
 
 **Recommendation:** scope privileged controls by **directory roles** or by **role-assignable groups**, as the phishing-resistant policy does. Microsoft does not allow role-assignable groups to use dynamic membership, precisely so that an attribute change can never grant a privileged role. Keep `DG-*` groups for non-privileged purposes and exclude admin accounts from attribute-based rules.
 
-> **About Finding 13:** the naming-convention sweep also returned the guest account used for billing, because its personal email address happens to start with "adm.". It holds no role, but it has no MFA registered in the tenant, so at its next sign-in the Require-MFA policy would let it register its own MFA: the same self-registration pattern as Finding 3, with low impact. A naming match is not proof of privilege, so the sweep script now shows the account type (member or guest).
+> <a id="f13"></a>**About Finding 13:** the naming-convention sweep also returned the guest account used for billing, because its personal email address happens to start with "adm.". It holds no role, but it has no MFA registered in the tenant, so at its next sign-in the Require-MFA policy would let it register its own MFA: the same self-registration pattern as Finding 3, with low impact. A naming match is not proof of privilege, so the sweep script now shows the account type (member or guest).
 
 ---
 
@@ -280,10 +280,10 @@ The policy was deployed in **Report-only**, validated, and then switched to **On
 - Added a second device-bound passkey for the primary admin, registered in Microsoft Authenticator, and formally accepted the residual single-key risk for the break glass (F5)
 - Moved every admin to just-in-time access with PIM for Groups, with standardized settings, and required phishing-resistant MFA on every activation through an authentication context (F6)
 - Disabled the stale admin account, revoked its sessions and removed its license (F7)
-- Excluded the break glass from all CA policies (F8)
-- Enabled a password-recovery path for the primary admin (F9)
-- Removed the redundant User Admin role (F11)
-- Retired two legacy CA policies (F12)
+- <a id="f8"></a>Excluded the break glass from all CA policies (F8)
+- <a id="f9"></a>Enabled a password-recovery path for the primary admin (F9)
+- <a id="f11"></a>Removed the redundant User Admin role (F11)
+- <a id="f12"></a>Retired two legacy CA policies (F12)
 
 **Next:**
 1. **Conditional Access on credential registration** with a Temporary Access Pass (F4)
