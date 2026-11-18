@@ -106,6 +106,8 @@ The settings were configured and tested on SG-ADM-GLOBAL, then **copied to the o
 - Attestation enforced
 - AAGUID allow-list: YubiKey 5 Series NFC and Microsoft Authenticator (iOS)
 
+📎 **Evidence:** [`passkey-profile.png`](evidence/passkey-profile.png)
+
 **Validation tooling:** What If simulations, sign-in log analysis (portal JSON export and Graph `beta/auditLogs/signIns`), and seven Graph PowerShell scripts. See [Scripts](#10-scripts).
 
 ---
@@ -162,6 +164,8 @@ The sign-in logs of 6 November show the before and after on the same day:
 - **"If reviewers don't respond" is set to *No change*.** A missed review must never remove the break glass from the exclusion group.
 - **The "no sign-in in 30 days" decision helper is off.** An emergency account is *supposed* to be unused, so the helper would recommend removing it every month.
 
+📎 **Evidence:** [`signins-before-after.csv`](evidence/signins-before-after.csv) · [`exclusion-group-pim-test.png`](evidence/exclusion-group-pim-test.png) · [`access-review-exclusions.png`](evidence/access-review-exclusions.png)
+
 ### <a id="f2"></a>Finding 2: "Require MFA" was not enough for admins
 
 "Require multifactor authentication" is satisfied by any MFA method, including push notifications, which can be relayed or approved through fatigue attacks. I created `CA-Admins-Require-PhishingResistantMFA` from Microsoft's template. While validating it I found that the template:
@@ -176,6 +180,8 @@ I corrected both and verified with a Graph script that every role assigned throu
   <em>The passkey profile at work: a synced passkey (iCloud Keychain) is rejected; only device-bound passkeys are accepted.</em>
 </p>
 
+📎 **Evidence:** [`ca-policy-phishing-resistant.png`](evidence/ca-policy-phishing-resistant.png) · [`policy-coverage.png`](evidence/policy-coverage.png) · [`passkey-profile.png`](evidence/passkey-profile.png) · [`report-only-results.png`](evidence/report-only-results.png)
+
 ### <a id="f3"></a>Finding 3: Admins with password only
 
 Three delegated admin accounts (Helpdesk, Security) had only a password and no MFA registered, even though a Require-MFA policy was On. **Whoever knows the password can register their own MFA at the first sign-in.**
@@ -185,6 +191,8 @@ A wider sweep **by naming convention**, rather than by group membership, found *
 My first assumption was that the new phishing-resistant policy would leave these accounts "blocked by design". **Testing showed that this was wrong.** The policy raises the bar to *use* the account, but not to *register* its first credentials. Someone with only the password can register Authenticator, then use that fresh MFA to create a passkey, and end up holding a phishing-resistant credential for an admin account (see Finding 4).
 
 **Containment:** all five accounts are **disabled**, and their memberships in the admin groups were **removed through PIM** with a justification. A disabled account cannot sign in or register anything. If they are needed again, they will be re-enabled through a **Temporary Access Pass** issued by an administrator and given an *eligible* (not active) membership, so the password is never the entry point.
+
+📎 **Evidence:** [`admin-named-accounts.png`](evidence/admin-named-accounts.png) · [`admin-accounts-disabled.png`](evidence/admin-accounts-disabled.png)
 
 ### <a id="f4"></a>Finding 4: Strong credentials can be bootstrapped from weak ones
 
@@ -248,9 +256,13 @@ Day-to-day work needs standard MFA. **Getting an admin role always needs a passk
   <em>After: one eligible membership; no standing access.</em>
 </p>
 
+📎 **Evidence:** [`pim-settings-standardized.png`](evidence/pim-settings-standardized.png)
+
 ### <a id="f7"></a>Finding 7: Disabled ≠ no access
 
 The previous admin account was disabled, its sessions revoked and its P2 license removed. After disabling it, the account **remained a member of an attribute-based dynamic group** (`usageLocation = CL`). Disabling an account does not remove its group memberships. That matters for any access granted through those groups. (Related to Finding 10.)
+
+📎 **Evidence:** [`stale-admin-offboarding.png`](evidence/stale-admin-offboarding.png)
 
 ### <a id="f10"></a>Finding 10: A "privileged" group that doesn't track privilege
 
@@ -261,7 +273,11 @@ The previous admin account was disabled, its sessions revoked and its P2 license
 
 **Recommendation:** scope privileged controls by **directory roles** or by **role-assignable groups**, as the phishing-resistant policy does. Microsoft does not allow role-assignable groups to use dynamic membership, precisely so that an attribute change can never grant a privileged role. Keep `DG-*` groups for non-privileged purposes and exclude admin accounts from attribute-based rules.
 
+📎 **Evidence:** [`dg-privileged-rule.png`](evidence/dg-privileged-rule.png)
+
 > <a id="f13"></a>**About Finding 13:** the naming-convention sweep also returned the guest account used for billing, because its personal email address happens to start with "adm.". It holds no role, but it has no MFA registered in the tenant, so at its next sign-in the Require-MFA policy would let it register its own MFA: the same self-registration pattern as Finding 3, with low impact. A naming match is not proof of privilege, so the sweep script now shows the account type (member or guest).
+>
+> 📎 **Evidence:** [`admin-named-accounts.png`](evidence/admin-named-accounts.png)
 
 ---
 
@@ -279,6 +295,8 @@ The policy was deployed in **Report-only**, validated, and then switched to **On
 | Exclusion | Break glass (BG01) | FIDO2 | Not applied (What If: 0 policies) | ✅ Access granted |
 | Passkey profile | Primary admin | Synced passkey (iCloud Keychain) | — | ⛔ Rejected: "passkey does not meet the criteria set by your administrator" |
 
+📎 **Evidence:** [`report-only-results.png`](evidence/report-only-results.png) · [`synced-passkey-rejected.png`](evidence/synced-passkey-rejected.png) · [`whatif-breakglass-before-after.png`](evidence/whatif-breakglass-before-after.png)
+
 ### 5.2 Just-in-time access (PIM)
 
 | Test | Expected | Result |
@@ -290,6 +308,8 @@ The policy was deployed in **Report-only**, validated, and then switched to **On
 | Settings on all five admin groups | Identical rules | ✅ Script verification: 4 h / authentication context / justification / eligible 1 year / active 15 days |
 | Standing memberships after the change | None | ✅ Inventory: only an *eligible* membership for the primary admin |
 
+📎 **Evidence:** [`pim-activation-stepup.png`](evidence/pim-activation-stepup.png) · [`pim-settings-standardized.png`](evidence/pim-settings-standardized.png) · [`pim-inventory-after.png`](evidence/pim-inventory-after.png)
+
 ### 5.3 Exclusion group
 
 | Test | Expected | Result |
@@ -297,6 +317,8 @@ The policy was deployed in **Report-only**, validated, and then switched to **On
 | Exclude a (disabled) test account | No permanent exclusion possible | ✅ Capped at 15 days; justification required |
 | Alert on a new exclusion | Email to the administrator | ✅ Received (who, whom, until when, why) |
 | Monthly access review | Reviewer confirms each member with a justification | ✅ First review completed; break glass approved as a documented exception |
+
+📎 **Evidence:** [`exclusion-group-pim-test.png`](evidence/exclusion-group-pim-test.png) · [`access-review-exclusions.png`](evidence/access-review-exclusions.png)
 
 ---
 
@@ -310,7 +332,7 @@ The policy was deployed in **Report-only**, validated, and then switched to **On
 - Added a second device-bound passkey for the primary admin, registered in Microsoft Authenticator, and formally accepted the residual single-key risk for the break glass (F5)
 - Moved every admin to just-in-time access with PIM for Groups, with standardized settings, and required phishing-resistant MFA on every activation through an authentication context (F6)
 - Disabled the stale admin account, revoked its sessions and removed its license (F7)
-- <a id="f8"></a>Excluded the break glass from all CA policies (F8)
+- <a id="f8"></a>Excluded the break glass from all CA policies (F8) · [`whatif-breakglass-before-after.png`](evidence/whatif-breakglass-before-after.png)
 - <a id="f9"></a>Enabled a password-recovery path for the primary admin (F9)
 - <a id="f11"></a>Removed the redundant User Admin role (F11)
 - <a id="f12"></a>Retired two legacy CA policies (F12)
