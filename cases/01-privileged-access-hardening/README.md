@@ -90,7 +90,7 @@ Each admin group keeps its Entra role **permanently**. What became just-in-time 
 | Active assignments (made by an admin) | Expire after 15 days (no permanent active membership), MFA + justification |
 | Notifications | Email alert on every activation and every new assignment |
 
-The settings were configured and tested on SG-ADM-GLOBAL, then **copied to the other four groups with a Graph script** so all admin groups follow identical rules.
+The settings were configured and tested on SG-ADM-GLOBAL, then **copied to the other four groups with a Graph script** ([`Copy-PimGroupSettings.ps1`](../../scripts/Copy-PimGroupSettings.ps1)) so all admin groups follow identical rules.
 
 **Governance of the exclusion group (`SG-CA-EXCLUSIONS`):**
 
@@ -146,7 +146,7 @@ When the baseline moved to **On (19 June 2026)**, the exclusion stayed in place.
 
 **Why it matters:** the same thing happens in real environments when a project ends and nobody reviews the exceptions it left behind. "Temporary" exclusions are one of the most common ways Conditional Access gets silently weakened. The fix was trivial. The lesson is the process: every exception needs a reason, an owner and an expiry date.
 
-The sign-in logs of 6 November show the before and after on the same day:
+The sign-in logs of 6 November show the before and after on the same day ([`Compare-SignInMfaRequirement.ps1`](../../scripts/Compare-SignInMfaRequirement.ps1)):
 
 | Period (UTC) | Sign-ins | Require-MFA result | Authentication requirement |
 |---|---|---|---|
@@ -173,7 +173,7 @@ The sign-in logs of 6 November show the before and after on the same day:
 - **excluded the current user (me) by default**, which would have recreated Finding 1, and
 - **did not include Identity Governance Administrator**, the role of one of my admin groups.
 
-I corrected both and verified with a Graph script that every role assigned through `SG-ADM-*` is in the policy scope (see [Scripts](#10-scripts)).
+I corrected both and verified with a Graph script ([`Test-AdminPolicyCoverage.ps1`](../../scripts/Test-AdminPolicyCoverage.ps1)) that every role assigned through `SG-ADM-*` is in the policy scope.
 
 <p align="center">
   <img src="evidence/synced-passkey-rejected.png" alt="Synced passkey rejected by the passkey profile"><br>
@@ -186,7 +186,7 @@ I corrected both and verified with a Graph script that every role assigned throu
 
 Three delegated admin accounts (Helpdesk, Security) had only a password and no MFA registered, even though a Require-MFA policy was On. **Whoever knows the password can register their own MFA at the first sign-in.**
 
-A wider sweep **by naming convention**, rather than by group membership, found **two more "ADM" accounts in the same state, but with no Entra role at all and no sign-in since they were created**. Because they hold no directory role, the admin-focused policies did not even apply to them. They were still members of operational groups and of a group named `DG-PRIVILEGED`.
+A wider sweep **by naming convention** ([`Find-AdminNamedAccounts.ps1`](../../scripts/Find-AdminNamedAccounts.ps1)), rather than by group membership, found **two more "ADM" accounts in the same state, but with no Entra role at all and no sign-in since they were created**. Because they hold no directory role, the admin-focused policies did not even apply to them. They were still members of operational groups and of a group named `DG-PRIVILEGED`.
 
 My first assumption was that the new phishing-resistant policy would leave these accounts "blocked by design". **Testing showed that this was wrong.** The policy raises the bar to *use* the account, but not to *register* its first credentials. Someone with only the password can register Authenticator, then use that fresh MFA to create a passkey, and end up holding a phishing-resistant credential for an admin account (see Finding 4).
 
@@ -225,10 +225,10 @@ The break glass account and the primary admin were both protected by the same Yu
 
 Before the change, every admin was a **permanent member** of a role-assignable group, so every admin role was always on. I moved all five admin groups to **PIM for Groups**:
 
-1. **Inventory first.** A Graph script recorded who held which role, how (direct or through a group) and until when. Everything was *Assigned / Permanent*.
+1. **Inventory first.** A Graph script ([`Get-PrivilegedAccessInventory.ps1`](../../scripts/Get-PrivilegedAccessInventory.ps1)) recorded who held which role, how (direct or through a group) and until when. Everything was *Assigned / Permanent*.
 2. **Safety net.** I tested the break glass sign-in before touching anything. It holds Global Admin directly, outside PIM.
 3. **Configure, then switch.** I configured the PIM rules on SG-ADM-GLOBAL while still a permanent member, made myself *eligible*, and only then removed my permanent membership. After that, my account showed **"No roles assigned"** until I activated.
-4. **Standardize.** A script copied the 19 PIM rules of SG-ADM-GLOBAL to the other four groups. Its *WhatIf* run showed the gap it closed: those groups would have allowed **8-hour activations with no passkey**.
+4. **Standardize.** A script ([`Copy-PimGroupSettings.ps1`](../../scripts/Copy-PimGroupSettings.ps1)) copied the 19 PIM rules of SG-ADM-GLOBAL to the other four groups. Its *WhatIf* run showed the gap it closed: those groups would have allowed **8-hour activations with no passkey**.
 5. **Remove the remaining standing access.** The permanent memberships of the disabled test admins were removed through PIM.
 
 **A gap I found along the way:** `CA-Admins-Require-PhishingResistantMFA` targets *directory roles*. With just-in-time access, an admin **holds no role between activations**, so that policy no longer applies to the sign-in used to *request* a role. A session opened with a password and a push notification would have been enough to activate Global Admin.
@@ -275,7 +275,7 @@ The previous admin account was disabled, its sessions revoked and its P2 license
 
 📎 **Evidence:** [`dg-privileged-rule.png`](evidence/dg-privileged-rule.png)
 
-> <a id="f13"></a>**About Finding 13:** the naming-convention sweep also returned the guest account used for billing, because its personal email address happens to start with "adm.". It holds no role, but it has no MFA registered in the tenant, so at its next sign-in the Require-MFA policy would let it register its own MFA: the same self-registration pattern as Finding 3, with low impact. A naming match is not proof of privilege, so the sweep script now shows the account type (member or guest).
+> <a id="f13"></a>**About Finding 13:** the naming-convention sweep also returned the guest account used for billing, because its personal email address happens to start with "adm.". It holds no role, but it has no MFA registered in the tenant, so at its next sign-in the Require-MFA policy would let it register its own MFA: the same self-registration pattern as Finding 3, with low impact. A naming match is not proof of privilege, so the sweep script ([`Find-AdminNamedAccounts.ps1`](../../scripts/Find-AdminNamedAccounts.ps1)) now shows the account type (member or guest).
 >
 > 📎 **Evidence:** [`admin-named-accounts.png`](evidence/admin-named-accounts.png)
 
@@ -285,7 +285,7 @@ The previous admin account was disabled, its sessions revoked and its P2 license
 
 ### 5.1 Phishing-resistant MFA for admins
 
-The policy was deployed in **Report-only**, validated, and then switched to **On** with a second admin session open as a fallback.
+The policy was deployed in **Report-only**, validated ([`Get-CAPolicyResults.ps1`](../../scripts/Get-CAPolicyResults.ps1) for the result of each sign-in, [`Check-AdminAuthMethods.ps1`](../../scripts/Check-AdminAuthMethods.ps1) for admins without a phishing-resistant method), and then switched to **On** with a second admin session open as a fallback.
 
 | Test | Account | Method | Report-only result | Enforced (On) |
 |---|---|---|---|---|
