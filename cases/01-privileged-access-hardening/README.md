@@ -330,23 +330,23 @@ The policy was deployed in **Report-only**, validated ([`Get-CAPolicyResults.ps1
 ## 6. Recommendations
 
 **Done:**
-- Removed the primary admin from the exclusion group (F1)
-- Put the exclusion group under PIM (max 15 days, justification, alerts) and a monthly Access Review, so a temporary exclusion can't become permanent again (F1)
-- Enforced phishing-resistant MFA for every admin role (F2)
-- Disabled the 5 password-only admin-named accounts and removed their admin-group memberships until TAP-based onboarding (F3)
-- Added a second device-bound passkey for the primary admin, registered in Microsoft Authenticator, and formally accepted the residual single-key risk for the break glass (F5)
-- Moved every admin to just-in-time access with PIM for Groups, with standardized settings, and required phishing-resistant MFA on every activation through an authentication context (F6)
-- Disabled the stale admin account, revoked its sessions and removed its license (F7)
+- Removed the primary admin from the exclusion group ([F1](#f1))
+- Put the exclusion group under PIM (max 15 days, justification, alerts) and a monthly Access Review, so a temporary exclusion can't become permanent again ([F1](#f1))
+- Enforced phishing-resistant MFA for every admin role ([F2](#f2))
+- Disabled the 5 password-only admin-named accounts and removed their admin-group memberships until TAP-based onboarding ([F3](#f3))
+- Added a second device-bound passkey for the primary admin, registered in Microsoft Authenticator, and formally accepted the residual single-key risk for the break glass ([F5](#f5))
+- Moved every admin to just-in-time access with PIM for Groups, with standardized settings, and required phishing-resistant MFA on every activation through an authentication context ([F6](#f6))
+- Disabled the stale admin account, revoked its sessions and removed its license ([F7](#f7))
 - <a id="f8"></a>Excluded the break glass from all CA policies (F8) · [`whatif-breakglass-before-after.png`](evidence/whatif-breakglass-before-after.png)
 - <a id="f9"></a>Enabled a password-recovery path for the primary admin (F9)
 - <a id="f11"></a>Removed the redundant User Admin role (F11)
 - <a id="f12"></a>Retired two legacy CA policies (F12)
 
 **Next:**
-1. **Conditional Access on credential registration** with a Temporary Access Pass (F4)
-2. **Alert on any break glass sign-in.** Being excluded from every CA policy only works if its use is monitored. This is also a compensating control for F5 (F5, F8)
-3. **Redesign `DG-PRIVILEGED`**, or retire it, and exclude admin accounts from attribute-based dynamic groups (F10)
-4. **Periodic break glass sign-in test**, documented (F5)
+1. **Conditional Access on credential registration** with a Temporary Access Pass ([F4](#f4))
+2. **Alert on any break glass sign-in.** Being excluded from every CA policy only works if its use is monitored. This is also a compensating control for F5 ([F5](#f5), [F8](#f8))
+3. **Redesign `DG-PRIVILEGED`**, or retire it, and exclude admin accounts from attribute-based dynamic groups ([F10](#f10))
+4. **Periodic break glass sign-in test**, documented ([F5](#f5))
 
 ---
 
@@ -374,13 +374,13 @@ Auditors and hiring managers often ask *"which control does this satisfy?"* This
 
 | Control area | ITGC | ISO/IEC 27001:2022 (Annex A) | NIST SP 800-53 Rev. 5 | Findings |
 |---|---|---|---|---|
-| Privileged access restricted, time-bound and reviewed | Logical access: privileged users | 8.2 Privileged access rights | AC-2, AC-6 | F1, F3, F6, F11 |
-| Strong authentication for admins | Logical access: authentication | 8.5 Secure authentication | IA-2(1), IA-2(2) | F2, F5, F6 |
-| Credential lifecycle (registration, recovery) | Logical access: password / credential management | 5.17 Authentication information | IA-5 | F4, F9 |
-| Timely removal of unused access | Logical access: user termination | 5.18 Access rights | AC-2(3) | F3, F7 |
-| Identity management and least privilege | Logical access: provisioning | 5.15 Access control, 5.16 Identity management | AC-2, AC-6(5) | F10, F11, F12, F13 |
-| Periodic review of exceptions and access | Logical access: user access reviews | 5.18 Access rights | AC-2(j) | F1 |
-| Logging and monitoring of privileged use | Monitoring of privileged activity | 8.15 Logging, 8.16 Monitoring activities | AU-6, AC-2(4) | F1, F6, F8 |
+| Privileged access restricted, time-bound and reviewed | Logical access: privileged users | 8.2 Privileged access rights | AC-2, AC-6 | [F1](#f1), [F3](#f3), [F6](#f6), [F11](#f11) |
+| Strong authentication for admins | Logical access: authentication | 8.5 Secure authentication | IA-2(1), IA-2(2) | [F2](#f2), [F5](#f5), [F6](#f6) |
+| Credential lifecycle (registration, recovery) | Logical access: password / credential management | 5.17 Authentication information | IA-5 | [F4](#f4), [F9](#f9) |
+| Timely removal of unused access | Logical access: user termination | 5.18 Access rights | AC-2(3) | [F3](#f3), [F7](#f7) |
+| Identity management and least privilege | Logical access: provisioning | 5.15 Access control, 5.16 Identity management | AC-2, AC-6(5) | [F10](#f10), [F11](#f11), [F12](#f12), [F13](#f13) |
+| Periodic review of exceptions and access | Logical access: user access reviews | 5.18 Access rights | AC-2(j) | [F1](#f1) |
+| Logging and monitoring of privileged use | Monitoring of privileged activity | 8.15 Logging, 8.16 Monitoring activities | AU-6, AC-2(4) | [F1](#f1), [F6](#f6), [F8](#f8) |
 
 ---
 
