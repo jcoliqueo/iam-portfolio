@@ -126,13 +126,13 @@ I logged 13 findings, ordered by severity. Select a number to jump to its detail
 | [1](#f1) | Build-phase MFA exclusion for the primary Global Admin never removed | **High** | ✅ Remediated, and recurrence prevented |
 | [2](#f2) | No phishing-resistant MFA requirement for admin roles | **High** | ✅ Remediated |
 | [3](#f3) | 5 admin-named accounts with password only and no MFA registered (3 with delegated roles, 2 with no role and no sign-in since creation) | **High** | ✅ Contained: accounts disabled and removed from admin groups until onboarding with a Temporary Access Pass |
-| [4](#f4) | Registering a new credential is protected only by standard MFA, or by nothing at all on a password-only account | **High** | ⬜ Open |
+| [4](#f4) | Registering a new credential is protected only by standard MFA, or by nothing at all on a password-only account | **High** | ⬜ Open: risk reduced by F3, fix [planned](#6-recommendations) |
 | [5](#f5) | Break glass and primary admin depended on the same single FIDO2 key | **High** | ⚪ Risk accepted, with compensating controls |
 | [6](#f6) | Privileged roles held permanently (no just-in-time access) | **High** | ✅ Remediated (PIM) |
 | [7](#f7) | Previous admin account still enabled and licensed after 135 days without use | Medium | ✅ Remediated |
 | [8](#f8) | Break glass included in a Conditional Access policy | Medium | ✅ Remediated |
 | [9](#f9) | Primary admin had no password-recovery path (SSPR) | Medium | ✅ Remediated |
-| [10](#f10) | A "privileged" dynamic group driven by job title rather than actual roles; attribute-based groups include admin accounts | Medium | ⬜ Open |
+| [10](#f10) | A "privileged" dynamic group driven by job title rather than actual roles; attribute-based groups include admin accounts | Medium | ⬜ Open: fix [planned](#6-recommendations) |
 | [11](#f11) | Primary admin held Global Admin plus a redundant User Admin role | Low | ✅ Remediated |
 | [12](#f12) | Two legacy CA policies: one redundant and misnamed (targeted an Audit group), one test policy | Low | ✅ Retired |
 | [13](#f13) | Guest account with no current business purpose and no MFA registered in the tenant | Low | ⚪ Risk accepted (billing dependency) |
