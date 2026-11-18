@@ -1,0 +1,47 @@
+createdDateTime_UTC,account,app,authenticationRequirement,CA-AllUsers-Require-MFA,CA-Admin-Session-12h,authMethods,errorCode,period
+2026-11-06T14:16:26Z,primary-admin,Microsoft Graph Command Line Tools,singleFactorAuthentication,notApplied,success,Passkey (device-bound),0,excluded (before remediation)
+2026-11-06T14:16:28Z,primary-admin,Microsoft Authentication Broker,singleFactorAuthentication,,,Previously satisfied,0,excluded (before remediation)
+2026-11-06T14:24:47Z,primary-admin,Microsoft Graph Command Line Tools,singleFactorAuthentication,notApplied,success,Previously satisfied,65001,excluded (before remediation)
+2026-11-06T14:24:51Z,primary-admin,Microsoft Graph Command Line Tools,singleFactorAuthentication,notApplied,success,,0,excluded (before remediation)
+2026-11-06T14:24:53Z,primary-admin,Microsoft Authentication Broker,singleFactorAuthentication,,,Previously satisfied,0,excluded (before remediation)
+2026-11-06T15:01:35Z,primary-admin,Microsoft Graph Command Line Tools,singleFactorAuthentication,notApplied,success,Previously satisfied,65001,excluded (before remediation)
+2026-11-06T15:01:39Z,primary-admin,Microsoft Graph Command Line Tools,singleFactorAuthentication,notApplied,success,,0,excluded (before remediation)
+2026-11-06T15:01:41Z,primary-admin,Microsoft Authentication Broker,singleFactorAuthentication,,,Previously satisfied,0,excluded (before remediation)
+2026-11-06T19:15:23Z,primary-admin,Azure Portal,singleFactorAuthentication,notApplied,success,Passkey (device-bound),0,excluded (before remediation)
+2026-11-06T19:20:05Z,primary-admin,Microsoft Graph Command Line Tools,singleFactorAuthentication,notApplied,success,Previously satisfied,65001,excluded (before remediation)
+2026-11-06T19:20:08Z,primary-admin,Microsoft Graph Command Line Tools,singleFactorAuthentication,notApplied,success,,0,excluded (before remediation)
+2026-11-06T19:20:09Z,primary-admin,Microsoft Authentication Broker,singleFactorAuthentication,,,Previously satisfied,0,excluded (before remediation)
+2026-11-06T19:49:21Z,primary-admin,Microsoft 365 Admin portal,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-06T19:49:32Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-06T19:49:32Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-06T19:49:32Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-06T19:51:41Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-06T19:51:41Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-06T19:51:41Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T00:44:27Z,primary-admin,Azure Portal,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T14:52:48Z,primary-admin,Azure Portal,multiFactorAuthentication,success,success,Passkey (device-bound); Previously satisfied,50140,remediated
+2026-11-07T14:52:53Z,primary-admin,Azure Portal,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T14:53:45Z,primary-admin,Microsoft 365 Admin portal,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T14:53:57Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T14:53:57Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T14:53:57Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T15:02:53Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T15:02:53Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T15:02:53Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T19:10:17Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T19:10:17Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-07T19:10:17Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:01:37Z,primary-admin,Azure Portal,multiFactorAuthentication,success,success,Passkey (device-bound); Previously satisfied,0,remediated
+2026-11-08T14:02:39Z,primary-admin,Microsoft 365 Admin portal,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:02:49Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:02:49Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:02:49Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:12:24Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:12:25Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:12:25Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:13:11Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:13:11Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-08T14:13:12Z,primary-admin,Office365 Shell WCSS-Client,multiFactorAuthentication,success,success,Previously satisfied,0,remediated
+2026-11-10T15:15:32Z,primary-admin,Microsoft Graph Command Line Tools,multiFactorAuthentication,success,success,Passkey (device-bound); Previously satisfied,0,remediated
+2026-11-10T15:15:33Z,primary-admin,Microsoft Authentication Broker,singleFactorAuthentication,,,Previously satisfied,0,remediated
+2026-11-10T15:19:24Z,primary-admin,Azure Portal,multiFactorAuthentication,success,success,Passkey (device-bound); Previously satisfied,0,remediated
