@@ -151,6 +151,9 @@ The sign-in logs of 6 November show the before and after on the same day:
 | 14:16 – 19:20 (excluded) | 8 | `notApplied` | `singleFactorAuthentication` |
 | 19:49 onwards (remediated) | 33 | `success` | `multiFactorAuthentication` |
 
+![Sign-ins before and after removing the exclusion](evidence/signins-before-after-summary.png)
+*Same day, same account: single-factor while excluded, multi-factor after the fix.*
+
 > **Honest note:** during the exclusion window the account was in practice used with a passkey. The finding is that **the control was missing**, so a password alone would have been enough. It is not that weak authentication was observed.
 
 **Preventing recurrence:** the exclusion group is now under PIM, so the next "temporary" exclusion **cannot be permanent**. It lasts at most 15 days, requires a justification and sends an email alert. I tested this by excluding a disabled test account: the request was capped at 15 days and the alert arrived. A **monthly Access Review** of the group catches anything added outside PIM. Two settings were adapted for the break glass:
@@ -165,6 +168,9 @@ The sign-in logs of 6 November show the before and after on the same day:
 - **did not include Identity Governance Administrator**, the role of one of my admin groups.
 
 I corrected both and verified with a Graph script that every role assigned through `SG-ADM-*` is in the policy scope (see [Scripts](#10-scripts)).
+
+![Synced passkey rejected by the passkey profile](evidence/synced-passkey-rejected.png)
+*The passkey profile at work: a synced passkey (iCloud Keychain) is rejected; only device-bound passkeys are accepted.*
 
 ### <a id="f3"></a>Finding 3: Admins with password only
 
@@ -181,6 +187,9 @@ My first assumption was that the new phishing-resistant policy would leave these
 While testing the block on a delegated admin, Entra asked for standard MFA (password + Authenticator push) and then **offered to create a passkey**. Anyone holding those weaker credentials could have registered a phishing-resistant credential for that admin. On a password-only account the chain is even shorter: password → register Authenticator → register a passkey. The registration attempt failed, and I confirmed with Graph that no passkey was created.
 
 This is why the severity is High. **A strong authentication policy is only as strong as the process that issues the strong credentials.**
+
+![Passkey registration offered after standard MFA](evidence/register-passkey-offer.png)
+*After a password + push sign-in, Entra offers to create a passkey for a delegated admin.*
 
 **Recommendation:** a Conditional Access policy on the *Register security information* user action that requires a trusted location and/or a **Temporary Access Pass** issued by an administrator.
 
@@ -214,9 +223,18 @@ Before the change, every admin was a **permanent member** of a role-assignable g
 - **From a passkey session**, activation went through.
 - **From a password + push session**, the activation form was locked with *"A Conditional Access policy is enabled and may require additional verification"* until I used the security key.
 
+![PIM activation locked until phishing-resistant MFA](evidence/pim-activation-stepup.png)
+*Activation requested from a password + push session: locked by Conditional Access until the security key is used.*
+
 Day-to-day work needs standard MFA. **Getting an admin role always needs a passkey.**
 
 **Reading the inventory correctly:** after PIM, the role assignments of the groups still show as *permanent*. That is by design, because the group holds the role. What changed is **who is inside the group and for how long**. The before/after evidence for this finding is the group membership section of the inventory, not the role section.
+
+![PIM inventory before](evidence/pim-inventory-before.png)
+*Before: every admin membership permanent.*
+
+![PIM inventory after](evidence/pim-inventory-after.png)
+*After: one eligible membership; no standing access.*
 
 ### <a id="f7"></a>Finding 7: Disabled ≠ no access
 
@@ -329,27 +347,29 @@ Auditors and hiring managers often ask *"which control does this satisfy?"* This
 
 ## 9. Evidence
 
+Key screenshots are shown inline in [What I found](#4-what-i-found). Every artifact is listed here; select a name to open it.
+
 | Artifact | Shows |
 |---|---|
-| `evidence/signins-before-after.csv` | Finding 1: every sign-in before and after removing the exclusion (sanitized) |
-| `evidence/signins-before-after-summary.png` | Finding 1: summary of the same data, reproduced with a script |
-| `evidence/exclusion-group-pim-test.png` | Finding 1: exclusion capped at 15 days, justification required, email alert |
-| `evidence/access-review-exclusions.png` | Finding 1: monthly access review of the exclusion group, first review completed |
-| `evidence/ca-policy-phishing-resistant.png` | Finding 2: the admin policy enforced |
-| `evidence/policy-coverage.png` | Finding 2: every role assigned to an admin group is covered by the policy; only the exclusion group is excluded |
-| `evidence/report-only-results.png` | Finding 2: positive and negative test results |
-| `evidence/passkey-profile.png` | Finding 2: device-bound, attestation and AAGUID allow-list |
-| `evidence/synced-passkey-rejected.png` | Finding 2: profile rejecting a synced passkey |
-| `evidence/admin-accounts-disabled.png` | Finding 3: the five password-only admin accounts disabled (Graph output) |
-| `evidence/admin-named-accounts.png` | Findings 3 and 13: sweep by naming convention, including account type |
-| `evidence/register-passkey-offer.png` | Finding 4: passkey registration offered after standard MFA |
-| `evidence/pim-inventory-before.png` | Finding 6: every admin membership permanent |
-| `evidence/pim-settings-standardized.png` | Finding 6: identical PIM rules on all five admin groups |
-| `evidence/pim-activation-stepup.png` | Finding 6: activation from a weak session locked until phishing-resistant MFA |
-| `evidence/pim-inventory-after.png` | Finding 6: only an eligible membership remains; no standing access |
-| `evidence/stale-admin-offboarding.png` | Finding 7: disabled, no roles, no licenses, but still 1 group membership |
-| `evidence/whatif-breakglass-before-after.png` | Finding 8: 1 policy → 0 policies |
-| `evidence/dg-privileged-rule.png` | Finding 10: dynamic membership rule based on job title |
+| [`evidence/signins-before-after.csv`](evidence/signins-before-after.csv) | Finding 1: every sign-in before and after removing the exclusion (sanitized) |
+| [`evidence/signins-before-after-summary.png`](evidence/signins-before-after-summary.png) | Finding 1: summary of the same data, reproduced with a script |
+| [`evidence/exclusion-group-pim-test.png`](evidence/exclusion-group-pim-test.png) | Finding 1: exclusion capped at 15 days, justification required, email alert |
+| [`evidence/access-review-exclusions.png`](evidence/access-review-exclusions.png) | Finding 1: monthly access review of the exclusion group, first review completed |
+| [`evidence/ca-policy-phishing-resistant.png`](evidence/ca-policy-phishing-resistant.png) | Finding 2: the admin policy enforced |
+| [`evidence/policy-coverage.png`](evidence/policy-coverage.png) | Finding 2: every role assigned to an admin group is covered by the policy; only the exclusion group is excluded |
+| [`evidence/report-only-results.png`](evidence/report-only-results.png) | Finding 2: positive and negative test results |
+| [`evidence/passkey-profile.png`](evidence/passkey-profile.png) | Finding 2: device-bound, attestation and AAGUID allow-list |
+| [`evidence/synced-passkey-rejected.png`](evidence/synced-passkey-rejected.png) | Finding 2: profile rejecting a synced passkey |
+| [`evidence/admin-accounts-disabled.png`](evidence/admin-accounts-disabled.png) | Finding 3: the five password-only admin accounts disabled (Graph output) |
+| [`evidence/admin-named-accounts.png`](evidence/admin-named-accounts.png) | Findings 3 and 13: sweep by naming convention, including account type |
+| [`evidence/register-passkey-offer.png`](evidence/register-passkey-offer.png) | Finding 4: passkey registration offered after standard MFA |
+| [`evidence/pim-inventory-before.png`](evidence/pim-inventory-before.png) | Finding 6: every admin membership permanent |
+| [`evidence/pim-settings-standardized.png`](evidence/pim-settings-standardized.png) | Finding 6: identical PIM rules on all five admin groups |
+| [`evidence/pim-activation-stepup.png`](evidence/pim-activation-stepup.png) | Finding 6: activation from a weak session locked until phishing-resistant MFA |
+| [`evidence/pim-inventory-after.png`](evidence/pim-inventory-after.png) | Finding 6: only an eligible membership remains; no standing access |
+| [`evidence/stale-admin-offboarding.png`](evidence/stale-admin-offboarding.png) | Finding 7: disabled, no roles, no licenses, but still 1 group membership |
+| [`evidence/whatif-breakglass-before-after.png`](evidence/whatif-breakglass-before-after.png) | Finding 8: 1 policy → 0 policies |
+| [`evidence/dg-privileged-rule.png`](evidence/dg-privileged-rule.png) | Finding 10: dynamic membership rule based on job title |
 
 *Sanitization: usernames are not treated as secrets and remain visible. The break glass identity is redacted because it is excluded from Conditional Access. Tenant IDs, object IDs, the old `onmicrosoft` admin account and personal email addresses are also removed.*
 
